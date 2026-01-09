@@ -15,6 +15,8 @@ gemini_key=os.getenv("gemini_key")
 print(gemini_key)
 client = genai.Client(api_key=gemini_key)
 
+#https://jpcaparas.medium.com/ralph-wiggum-explained-the-claude-code-loop-that-keeps-going-3250dcc30809
+
 def main():
     code_review_conversation_history=[]
     code_review_conversation_history.append({"role": "model", "content": "You are a coding reviewer. Verify if code works corectly or not and why."})
