@@ -1,15 +1,12 @@
 
-def sieve_of_eratosthenes(limit):
-    primes = [True] * (limit + 1)
-    primes[0] = primes[1] = False
-    
+def get_primes(limit):
+    is_prime = [True] * (limit + 1)
+    is_prime[0] = is_prime[1] = False
     for p in range(2, int(limit**0.5) + 1):
-        if primes[p]:
+        if is_prime[p]:
             for i in range(p * p, limit + 1, p):
-                primes[i] = False
-                
-    return [num for num, is_prime in enumerate(primes) if is_prime]
+                is_prime[i] = False
+    return [p for p, alive in enumerate(is_prime) if alive]
 
-if __name__ == "__main__":
-    result = sieve_of_eratosthenes(10000)
-    print(result)
+primes = get_primes(10000)
+print(primes)
