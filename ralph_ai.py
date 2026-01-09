@@ -6,12 +6,12 @@ from pydantic import BaseModel, Field
 import json
 from typing import List, Optional
 
-#Class that structures code feedback output
 class GoalFeedback(BaseModel):
     goal:str=Field(description="What the goal is")
     meets_all_goals: bool=Field(description="Whether the code completes the goal or not.")
     reason: str = Field(description="Why the code completes the goal or not.")
 
+#Class that structures code feedback output. The code works if it completes all of the goals.
 class CodeFeedback(BaseModel):
     goals: List[GoalFeedback]
 
@@ -21,11 +21,19 @@ load_dotenv("generative_ai_keys.env")
 gemini_key=os.getenv("gemini_key")
 client = genai.Client(api_key=gemini_key)
 
+MAX_ATTEMPTS_LIMIT=3
+
+#How many attempts to use to solve the problem
 max_attempts=2
+
+#The code that Google Gemini writes
 code_output=""
 meets_all_goals=False
 
+#The output file type
 output_file_type="py"
+
+#The problem the code will try to solve
 initial_query="Write a Python program that finds primes from 1 to 10000. Make sure the code uses simple math."
 
 def main():
@@ -35,7 +43,7 @@ def main():
         print(initial_query)
 
         aided_query=initial_query
-        #If past the first attempt, use previously generated code to solve the problem
+        #If past the first attempt, use previously generated code to solve the problem.
         if attempt>1:
             with(open(f"code_output.{output_file_type}")) as code_support_file:
                 aided_query+="\nImprove this code to solve the problem.\n"
@@ -54,6 +62,7 @@ def main():
         code_output=code_output.replace("```python","")
         code_output=code_output.replace("```","")
         print(code_output)
+        #Save code output to a file
         with(open(f"code_output.{output_file_type}","w")) as output_file:
             output_file.write(code_output)
         print("Checking if code works...")
@@ -88,7 +97,6 @@ def main():
         #Otherwise, try again
         else:
             print("Code does not work")
-        break
 
     if meets_all_goals:
         print("Solved Query",end="\n\n")
